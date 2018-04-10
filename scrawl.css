@@ -32,6 +32,15 @@ em {
 .main {
     margin: 20px 20px 0;
     overflow: hidden;
+    width: 650px;
+}
+
+.submitBar {
+    clear: both;
+    height: 80px;
+    line-height: 40px;
+    padding-top: 60px;
+    padding-left: 200px;
 }
 
 .hot {

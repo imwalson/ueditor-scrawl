@@ -630,43 +630,13 @@ function addMaskLayer(html) {
 function exec(scrawlObj) {
     if (scrawlObj.isScrawl) {
         //addMaskLayer(lang.scrawlUpLoading);
-        addMaskLayer('上传中...');
+        //addMaskLayer('上传中...');
         var base64 = scrawlObj.getCanvasData();
-        console.log(base64);
+        alert('图片base64结果: ' + base64);
+        return;
         if (!!base64) {
-            var options = {
-                timeout:100000,
-                onsuccess:function (xhr) {
-                    if (!scrawlObj.isCancelScrawl) {
-                        var responseObj;
-                        responseObj = eval("(" + xhr.responseText + ")");
-                        if (responseObj.state == "SUCCESS") {
-                            var imgObj = {},
-                                url = editor.options.scrawlUrlPrefix + responseObj.url;
-                            imgObj.src = url;
-                            imgObj._src = url;
-                            imgObj.alt = responseObj.original || '';
-                            editor.execCommand("insertImage", imgObj);
-                            //dialog.close();
-                        } else {
-                            alert(responseObj.state);
-                        }
-
-                    }
-                },
-                onerror:function () {
-                    //alert(lang.imageError);
-                    alert('imageError');
-                    //dialog.close();
-                }
-            };
-            options[editor.getOpt('scrawlFieldName')] = base64;
-
-            var actionUrl = editor.getActionUrl(editor.getOpt('scrawlActionName')),
-                params = utils.serializeParam(editor.queryCommandValue('serverparam')) || '',
-                //url = utils.formatUrl(actionUrl + (actionUrl.indexOf('?') == -1 ? '?':'&') + params);
-                url = actionUrl;
-            ajax.request(url, options);
+            // 上传到服务器
+            
         }
     } else {
         //addMaskLayer(lang.noScarwl + "&nbsp;&nbsp;&nbsp;<input type='button' value='" + lang.continueBtn + "'  onclick='removeMaskLayer()'/>");
