@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta content="telephone=no" name="format-detection" />
+  <script type="text/javascript" src="./neditor.all.js"></script>
+  <script type="text/javascript" src="./internal.js"></script>
+  <link rel="stylesheet" type="text/css" href="./css/flex.css">
+  <link rel="stylesheet" type="text/css" href="./scrawl_mobile.css">
+  <link rel="stylesheet" href="./fonts/buttoniconex.css">
+</head>
+<body class="box">
+<div class="main" id="J_wrap">
+  <div class="hot scroll">
+    <div class="drawBoard">
+      <canvas id="J_brushBoard" class="brushBorad" width="375" height="375"></canvas>
+      <div id="J_picBoard" class="picBoard" style="width: 375px;height: 375px"></div>
+    </div>
+    <div id="J_operateBar" class="operateBar">
+      <span id="J_previousStep" class="previousStep edui-for-previousstep edui-notadd">
+        <em class="icon edui-icon"></em>
+        <em class="text">
+        </em>
+      </span>
+      <span id="J_nextStep" class="nextStep edui-for-nextstep edui-notadd">
+        <em class="icon edui-icon "></em>
+        <em class="text">
+        </em>
+      </span>
+      <span id="J_clearBoard" class="clearBoard edui-for-clearboard edui-notadd">
+        <em class="icon edui-icon" ></em>
+        <em class="text">
+        </em>
+      </span>
+      <span id="J_sacleBoard" class="scaleBoard edui-for-scaleboard edui-notadd" style="display: none;">
+        <em class="icon edui-icon"></em>
+        <em class="text">
+        </em>
+      </span>
+    </div>
+  </div>
+  <div class="drawToolbar">
+    <div id="J_colorBar" class="colorBar"></div>
+    <div class="flex-middle">
+        <div id="J_brushBar" class="sectionBar edui-for-brush edui-notadd unit-1-2">
+            <em class="brushIcon edui-icon"></em>
+            <a href="javascript:void(0)" class="size1">1</a>
+            <a href="javascript:void(0)" class="size2">3</a>
+            <a href="javascript:void(0)" class="size3">5</a>
+            <a href="javascript:void(0)" class="size4">7</a>
+        </div>
+        <div id="J_eraserBar" class="sectionBar edui-for-removeformat edui-notadd unit-1-2">
+            <em class="eraserIcon edui-icon"></em>
+            <a href="javascript:void(0)" class="size1">1</a>
+            <a href="javascript:void(0)" class="size2">3</a>
+            <a href="javascript:void(0)" class="size3">5</a>
+            <a href="javascript:void(0)" class="size4">7</a>
+        </div>
+    </div>
+    <div class="flex-left" style="display: none;">
+        <div class="sectionBar unit-1-2">
+            <div id="J_addImg" class="addImgH">
+                <em class="text">添加背景</em>
+                <form method="post" id="fileForm" enctype="multipart/form-data" class="addImgH_form" target="up">
+                <input type="file" name="upfile" id="J_imgTxt"
+                    accept="image/gif,image/jpeg,image/png,image/jpg,image/bmp"/>
+                </form>
+                <iframe name="up" style="display: none"></iframe>
+            </div>
+        </div>
+        <div class="sectionBar unit-1-2">
+            <span id="J_removeImg" class="removeImg">
+                <em class="text">删除背景</em>
+            </span>
+        </div>
+    </div>
+    <div style="padding-top: 20px;text-align: center;">
+        <div id="J_submit" class="removeImg">
+            <em class="text">立即提交</em>
+        </div>
+    </div>
+  </div>
+</div>
+<div id="J_maskLayer" class="maskLayerNull"></div>
+
+<script type="text/javascript" src="scrawl.mobile.js"></script>
+<script type="text/javascript">
+  var settings = {
+    drawBrushSize: 3, //画笔初始大小
+    drawBrushColor: "#000000", //画笔初始颜色
+    colorList: ['000000','c00000', 'ff0000', 'ffc000', 'ffff00', '92d050', '00b050', '00b0f0', '0070c0', '002060', '7030a0', 'ffffff',
+     'eeece1', '1f497d', '4f81bd',  'f79646'], //画笔选择颜色
+    saveNum: 10  //撤销次数
+  };
+
+  var scrawlObj = new scrawl( settings );
+  scrawlObj.isCancelScrawl = false;
+
+  // canvas 尺寸自适应
+  var gWinWidth = document.body.clientWidth;
+  var canvas = $G("J_brushBoard");
+  var picBoard = $G("J_picBoard");
+  canvas.width = canvas.height = gWinWidth;
+  picBoard.style.width = picBoard.style.height = (gWinWidth + 'px');
+
+
+  // 提交事件
+  domUtils.on($G("J_submit"), "click", function () {
+      exec( scrawlObj );
+  })
+  // dialog.onok = function () {
+  //     exec( scrawlObj );
+  //     return false;
+  // };
+  // dialog.oncancel = function () {
+  //     scrawlObj.isCancelScrawl = true;
+  // };
+    // 禁止微信浏览器内滚动回弹
+    var overscroll = function(el) {
+        el.addEventListener('touchstart', function() {
+            var top = el.scrollTop
+            ,totalScroll = el.scrollHeight
+            ,currentScroll = top + el.offsetHeight;
+            if(top === 0) {
+                el.scrollTop = 1;
+            }else if(currentScroll === totalScroll) {
+                el.scrollTop = top - 1;
+            }
+        });
+
+        el.addEventListener('touchmove', function(evt) {
+        if(el.offsetHeight < el.scrollHeight)
+            evt._isScroller = true;
+        });
+    }
+            
+    overscroll(document.querySelector('.scroll'));
+    document.body.addEventListener('touchmove', function(evt) {
+        if(!evt._isScroller) {
+            evt.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>
